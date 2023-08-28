@@ -3,10 +3,15 @@ import { defineStore } from 'pinia'
 
 export const useClientStore = defineStore('client', () => {
   const clientId = ref('')
+  const clientRoom = ref('')
 
   const setClientId = (id: string) => {
     clientId.value = id
   }
 
-  return { clientId, setClientId }
+  const setClientRoom = (room: string) => {
+    clientRoom.value = room
+  }
+
+  return { clientId, setClientId, clientRoom, setClientRoom }
 })
