@@ -21,6 +21,29 @@
         </div>
         <div ref="scrollThis"
             class="flex flex-col space-y-4 p-3 overflow-y-auto scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch">
+            <div v-for="(item, index) in messageHistory" :key="index" class="chat-message">
+                <div class="flex justify-center">
+                    <div v-if="item.message_type === 2" class="flex flex-col space-y-2 text-xs  order-1 items-center">
+                        <div><span class="px-2 py-1 rounded-lg inline-block bg-gray-300 text-gray-600 ">
+                                {{ item.content }}
+                            </span></div>
+                    </div>
+                </div>
+                <div v-if="item.sender_id === store.clientId && item.message_type === 1" class="flex items-end justify-end">
+                    <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
+                        <div><span class="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white ">
+                                {{ item.content }}
+                            </span></div>
+                    </div>
+                </div>
+                <div v-else-if="item.sender_id !== store.clientId && item.message_type === 1" class="flex items-end">
+                    <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
+                        <div><span class="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
+                                {{ item.content }}
+                            </span></div>
+                    </div>
+                </div>
+            </div>
             <div v-for="(item, index) in message" :key="index" class="chat-message">
                 <div class="flex justify-center">
                     <div v-if="item.message_type === 2" class="flex flex-col space-y-2 text-xs  order-1 items-center">
@@ -85,16 +108,23 @@
 </template>
 
 <script lang="ts">
-import { ref, onBeforeUnmount } from 'vue';
+import { ref, onBeforeUnmount, onMounted } from 'vue';
 import { useClientStore } from '@/stores/client';
 import WebSocket from 'websocket';
 import { useRoute } from 'vue-router';
+import axios from 'axios';
 
 interface Message {
     body: string;
     message_type: number;
     sender: string;
     type: number;
+}
+
+interface HistoryMessage {
+    content: string;
+    message_type: number;
+    sender_id: string;
 }
 
 export default {
@@ -105,11 +135,19 @@ export default {
         const ws = WebSocket.w3cwebsocket;
         const socket = new ws('ws://localhost:8080/ws?room=' + room);
         const message = ref<Message[]>([]);
+        const messageHistory = ref<HistoryMessage[]>([]);
         const input = ref('');
         const isLoading = ref(false);
         const scrollThis = ref<HTMLElement | null>(null);
 
         const store = useClientStore();
+
+        const getHistoryMessage = async () => {
+            const response = await axios.get('http://localhost:8080/message?room=' + room, {
+                withCredentials: true
+            });
+            messageHistory.value = response.data;
+        };
 
         const sendData = () => {
             if (input.value === '') {
@@ -119,6 +157,7 @@ export default {
             const message = {
                 message: input.value,
                 room: store.clientRoom,
+                sender: localStorage.getItem('user_id'),
             }
 
             socket.send(JSON.stringify(message));
@@ -133,7 +172,7 @@ export default {
             if (typeof event.data === 'string') {
                 let data = JSON.parse(event.data);
                 if (data.message_type === 3) {
-                    store.setClientId(data.sender);
+                    store.setClientId(localStorage.getItem('user_id') as string);
                     store.setClientRoom(data.room);
                     return;
                 }
@@ -144,6 +183,10 @@ export default {
                 }, 100);
             }
         };
+
+        onMounted(() => {
+            getHistoryMessage();
+        });
 
         onBeforeUnmount(() => {
             socket.close();
@@ -159,6 +202,7 @@ export default {
 
         return {
             message,
+            messageHistory,
             sendData,
             isLoading,
             input,

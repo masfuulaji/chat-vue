@@ -9,8 +9,8 @@
                 </div>
             </div>
             <div class="flex flex-col">
-                <div class="my-2 flex" v-for="room in rooms">
-                    <RouterLink :key="room.id" class="btn btn-info w-11/12"
+                <div class="my-2 flex justify-center items-center" v-for="room in rooms">
+                    <RouterLink :key="room.id" class="btn btn-info w-10/12 mr-5"
                         :to="{ name: 'chat', params: { room: room.id } }">{{ room.name }}</RouterLink>
                     <button class="btn btn-error w-1/12" @click="deleteRoom(room.id)">Delete</button>
                 </div>
@@ -48,18 +48,24 @@ const rooms = ref([] as Room[]);
 const room = ref('');
 
 const getRooms = async () => {
-    const response = await axios.get('http://localhost:8080/room');
+    const response = await axios.get('http://localhost:8080/room', {
+        withCredentials: true
+    });
     rooms.value = response.data;
 }
 
 const deleteRoom = async (id: string) => {
-    await axios.delete('http://localhost:8080/room/' + id);
+    await axios.delete('http://localhost:8080/room/' + id, {
+        withCredentials: true
+    });
     getRooms();
 }
 
 const saveRoom = async () => {
     await axios.post('http://localhost:8080/room', {
         name: room.value
+    }, {
+        withCredentials: true
     })
     getRooms();
 
