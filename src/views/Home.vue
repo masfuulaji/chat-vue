@@ -1,6 +1,12 @@
 <template>
     <div data-theme="dracula">
         <div class="h-screen p-4">
+            <div class="flex justify-between items-center m-2 mb-10">
+                <h1 class="text-5xl ml-2"></h1>
+                <div class="flex">
+                    <button class="btn btn-error mr-2" @click="logout">logout</button>
+                </div>
+            </div>
             <div class="flex justify-between items-center m-2">
                 <h1 class="text-5xl ml-2">Room</h1>
                 <div class="flex">
@@ -11,7 +17,9 @@
             <div class="flex flex-col">
                 <div class="my-2 flex justify-center items-center" v-for="room in rooms">
                     <RouterLink :key="room.id" class="btn btn-info w-10/12 mr-5"
-                        :to="{ name: 'chat', params: { room: room.id } }">{{ room.name }}</RouterLink>
+                        :to="{ name: 'chat', params: { room: room.id } }">
+                        {{ room.name }}
+                    </RouterLink>
                     <button class="btn btn-error w-1/12" @click="deleteRoom(room.id)">Delete</button>
                 </div>
             </div>
@@ -37,6 +45,7 @@
 <script setup lang="ts">
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
+import router from '@/router';
 
 const showModal = ref(false);
 
@@ -72,6 +81,16 @@ const saveRoom = async () => {
     room.value = '';
 
     showModal.value = false;
+}
+
+const logout = async () => {
+    const response = await axios.get('http://localhost:8080/auth/logout', {
+        withCredentials: true
+    })
+
+    if (response.status === 200) {
+        router.push({ name: 'login' });
+    }
 }
 onMounted(() => {
     getRooms();

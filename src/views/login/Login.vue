@@ -62,11 +62,13 @@ const login = async () => {
         const response = await axios.post('http://localhost:8080/auth/login', {
             name: formLogin.username,
             password: formLogin.password
+        }, {
+            withCredentials: true
         })
 
-        // if (response.status === 200) {
-        //     router.push({ name: 'home' });
-        // }
+        if (response.status === 200) {
+            router.push({ name: 'home' });
+        }
     } catch (error) {
         console.log(error);
     }
