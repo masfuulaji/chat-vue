@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div data-theme="dracula">
         <div class="h-screen p-4">
@@ -15,7 +16,7 @@
                 </div>
             </div>
             <div class="flex flex-col">
-                <div class="my-2 flex justify-center items-center" v-for="room in rooms">
+                <div class="my-2 flex justify-center items-center" v-for="room in rooms" v-bind:key="room.id">
                     <RouterLink :key="room.id" class="btn btn-info w-10/12 mr-5"
                         :to="{ name: 'chat', params: { room: room.id } }">
                         {{ room.name }}
