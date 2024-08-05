@@ -52,6 +52,7 @@ import { reactive } from 'vue';
 const formLogin = reactive({
     username: '',
     password: '',
+    email: ''
 });
 
 const login = async () => {
