@@ -60,7 +60,7 @@ const formLogin = reactive({
 const login = async () => {
     try {
 
-        const response = await axios.post('http://localhost:8080/auth/login', {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, {
             name: formLogin.username,
             password: formLogin.password
         }, {

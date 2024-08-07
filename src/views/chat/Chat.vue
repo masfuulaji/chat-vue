@@ -133,7 +133,7 @@ export default {
         const router = useRoute();
         const room = router.params.room;
         const ws = WebSocket.w3cwebsocket;
-        const socket = new ws('ws://localhost:8080/ws?room=' + room);
+        const socket = new ws(`${import.meta.env.VITE_API_WEBSOCKET_URL}/ws?room=` + room);
         const message = ref<Message[]>([]);
         const messageHistory = ref<HistoryMessage[]>([]);
         const input = ref('');
@@ -143,7 +143,7 @@ export default {
         const store = useClientStore();
 
         const getHistoryMessage = async () => {
-            const response = await axios.get('http://localhost:8080/message?room=' + room, {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/message?room=` + room, {
                 withCredentials: true
             });
             messageHistory.value = response.data;

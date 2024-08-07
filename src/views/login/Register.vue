@@ -16,7 +16,7 @@
                         </div>
                     </div>
                     <div>
-                        <label for="email" class="block text-sm font-medium leading-6">Username</label>
+                        <label for="email" class="block text-sm font-medium leading-6">Email</label>
                         <div class="mt-2">
                             <input id="email" v-model="formLogin.email" type="text" required
                                 class="block w-full rounded-md border-0 py-2 px-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
@@ -58,7 +58,7 @@ const formLogin = reactive({
 const login = async () => {
     try {
 
-        const response = await axios.post('http://localhost:8080/auth/register', {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, {
             name: formLogin.username,
             email: formLogin.email,
             password: formLogin.password

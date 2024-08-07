@@ -58,21 +58,21 @@ const rooms = ref([] as Room[]);
 const room = ref('');
 
 const getRooms = async () => {
-    const response = await axios.get('http://localhost:8080/room', {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/room`, {
         withCredentials: true
     });
     rooms.value = response.data;
 }
 
 const deleteRoom = async (id: string) => {
-    await axios.delete('http://localhost:8080/room/' + id, {
+    await axios.delete(`${import.meta.env.VITE_API_URL}/room/` + id, {
         withCredentials: true
     });
     getRooms();
 }
 
 const saveRoom = async () => {
-    await axios.post('http://localhost:8080/room', {
+    await axios.post(`${import.meta.env.VITE_API_URL}/room`, {
         name: room.value
     }, {
         withCredentials: true
@@ -85,7 +85,7 @@ const saveRoom = async () => {
 }
 
 const logout = async () => {
-    const response = await axios.get('http://localhost:8080/auth/logout', {
+    const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/logout`, {
         withCredentials: true
     })
 
